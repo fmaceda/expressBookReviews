@@ -27,7 +27,7 @@ public_users.post("/register", (req, res) => {
 // Get the book list available in the shop
 public_users.get('/', async function (req, res) {
   // Using a promise to simulate asynchronous operation for fetching all books
-  var getAllBooksPromise = new Promise((resolve, reject) => {
+  const getAllBooksPromise = new Promise((resolve, reject) => {
     setTimeout(() => {
       if (books.length === 0) {
         reject("No books available");
@@ -47,10 +47,26 @@ public_users.get('/', async function (req, res) {
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn', function (req, res) {
+public_users.get('/isbn/:isbn', async function (req, res) {
+  // Using a promise to simulate asynchronous operation for fetching book details by ISBN
+  const getBookByISBNDPromise = new Promise((resolve, reject) => {
+    const isbn = req.params.isbn;
+    setTimeout(() => {
+      if (books[isbn]) {
+        resolve(books[isbn]);
+      } else {
+        reject("Book not found");
+      }
+    }, 1000);
+  });
   // Retrieve the isbn parameter from the request URL and send the corresponding book details
   const isbn = req.params.isbn;
-  res.send(JSON.stringify(books[isbn], null, 4));
+  try {
+    const book = await getBookByISBNDPromise;
+    res.send(JSON.stringify(book, null, 4));
+  } catch (error) {
+    res.status(404).json({ message: error });
+  }
 });
 
 // Get book details based on author
