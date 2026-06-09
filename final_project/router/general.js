@@ -27,7 +27,17 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   // Send JSON response with formatted books data
-  res.send(JSON.stringify(books,null,4));
+  // Add the code for getting the list of books available in the shop (done in Task 1) using Promise callbacks or async-await with Axios.
+  async function getBooks() {
+    try {
+      res.send(JSON.stringify(books,null,4));
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      res.status(500).json({ message: "Error fetching books" });
+    }
+  }
+  getBooks();
+  // res.send(JSON.stringify(books,null,4));
 });
 
 // Get book details based on ISBN
