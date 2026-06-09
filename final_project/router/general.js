@@ -94,11 +94,27 @@ public_users.get('/author/:author', async function (req, res) {
 });
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
+public_users.get('/title/:title', async function (req, res) {
+  // Using a promise to simulate asynchronous operation for fetching book details by title
+  const getBooksByTitlePromise = new Promise((resolve, reject) => {
+    const title = req.params.title;
+    setTimeout(() => {
+      const filteredBooks = Object.values(books).filter(book => book.title === title);
+      if (filteredBooks.length > 0) {
+        resolve(filteredBooks);
+      } else {
+        reject("No books found for the given title");
+      }
+    }, 1000);
+  });
   // Retrieve the title parameter from the request URL and send the corresponding book details
   const title = req.params.title;
-  const filteredBooks = Object.values(books).filter(book => book.title === title);
-  res.send(JSON.stringify(filteredBooks, null, 4));
+  try {
+    const filteredBooks = await getBooksByTitlePromise;
+    res.send(JSON.stringify(filteredBooks, null, 4));
+  } catch (error) {
+    res.status(404).json({ message: error });
+  }
 });
 
 //  Get book review
